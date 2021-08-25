@@ -55,6 +55,9 @@ export default class NearProvider implements Provider {
     
         // Set the balance to the correct amount
         await this.getBalanceInfo();
+
+        // Keep balances updated
+        setInterval(() => this.getBalanceInfo(), 10_000);
     }
 
     async getBalanceInfo(): Promise<Balance> {
