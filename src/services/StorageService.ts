@@ -69,8 +69,10 @@ export async function upgradeStorage(config: Config, account: Account, extraStor
     if (!storageBalance.available.lt(storageRequired)) {
         return;
     }
-
+    
+    const storageDeposit = storageRequired.sub(storageBalance.available).toString();
+    
     await account.functionCall(config.oracleContractId, 'storage_deposit', {
         account_id: config.validatorAccountId,
-    }, config.maxGas, new BN(storageRequired.sub(storageBalance.available).toString()));
+    }, config.maxGas, new BN(storageDeposit));
 }

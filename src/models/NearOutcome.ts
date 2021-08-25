@@ -46,7 +46,7 @@ export function transformToOutcome(nearOutcome: NearOutcome): Outcome {
         };
     }
 
-    const number = new Big(nearOutcome.Answer.Number.value).div(nearOutcome.Answer.Number.multiplier);
+    const number = new Big(nearOutcome.Answer.Number.value);
 
     if (nearOutcome.Answer.Number.negative) {
         number.s = -1;
@@ -74,19 +74,19 @@ export function transformToNearOutcome(outcome: Outcome, dataType: DataRequestDa
     let number = new Big(outcome.answer);
     const isNegative = number.lt(0);
 
-    number = number.mul(dataType.multiplier);
-
     if (isNegative) {
         number = number.mul(-1);
     }
 
-    return {
+    const ans = {
         Answer: {
             Number: {
-                value: number.toString(),
+                value: number.toFixed(0),
                 multiplier: dataType.multiplier,
                 negative: isNegative,
             },
         },
     };
+    
+    return ans;
 }

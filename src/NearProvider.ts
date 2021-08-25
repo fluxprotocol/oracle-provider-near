@@ -19,6 +19,8 @@ import { upgradeStorage } from "./services/StorageService";
 import { extractLogs, isTransactionFailure } from "./services/TransactionService";
 import { claimBackUnbondedStake } from "./services/StakeService";
 
+Big.PE = 100_000;
+
 export default class NearProvider implements Provider {
     providerName = PROVIDER_NAME;
     id = PROVIDER_ID;

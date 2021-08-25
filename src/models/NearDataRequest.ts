@@ -39,9 +39,8 @@ export interface NearRequest {
 
 export function transformToDataRequest(request: NearRequest): DataRequest {
     // TODO: We also might want to encode the token contract id in the metadata
-
     return {
-        id: request.id,
+        id: request.id.toString(),
         internalId: buildInternalId(request.id, PROVIDER_ID, ''),
         dataType: request.data_type === 'String' ? { type: 'string' } : { type: 'number', multiplier: request.data_type.Number },
         finalArbitratorTriggered: request.final_arbitrator_triggered,
