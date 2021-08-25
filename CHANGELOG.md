@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/fluxprotocol/oracle-provider-near/compare/v1.2.2...v1.2.3) (2021-08-25)
+
+
+### Bug Fixes
+
+* **balance:** Fix issue where balances where not correctly tracked ([f7661f8](https://github.com/fluxprotocol/oracle-provider-near/commit/f7661f85220dff2ab243eb39b76d94234937eeb1))
+
 ### [1.2.2](https://github.com/fluxprotocol/oracle-provider-near/compare/v1.2.1...v1.2.2) (2021-08-25)
 
 
