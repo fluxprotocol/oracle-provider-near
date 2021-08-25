@@ -4,10 +4,12 @@ import { Account, providers } from "near-api-js";
 import { getRequestOutcome, isOutcomesEqual } from "@fluxprotocol/oracle-provider-core/dist/Outcome";
 import { Config } from "../models/Config";
 import { transformToNearOutcome } from "../models/NearOutcome";
+import Big from "big.js";
 
-export function claimBackUnbondedStake(config: Config, request: DataRequest, account: Account): Promise<providers.FinalExecutionOutcome>[] {
+export async function claimBackUnbondedStake(config: Config, request: DataRequest, account: Account): Promise<Big> {
     const requestOutcome = getRequestOutcome(request);
     const transactions: Promise<providers.FinalExecutionOutcome>[] = [];
+    let totalUnbondedStake: Big = new Big(0);
 
     request.staking.forEach((stake) => {
         const resolutionWindow = request.resolutionWindows[stake.roundId];
@@ -17,6 +19,8 @@ export function claimBackUnbondedStake(config: Config, request: DataRequest, acc
         }
 
         if (!resolutionWindow.bondedOutcome || !isOutcomesEqual(resolutionWindow.bondedOutcome, requestOutcome)) {
+            totalUnbondedStake = totalUnbondedStake.add(stake.amount);
+            
             transactions.push(
                 account.functionCall(config.oracleContractId, 'dr_unstake', {
                     request_id: request.id,
@@ -28,5 +32,7 @@ export function claimBackUnbondedStake(config: Config, request: DataRequest, acc
         }
     });
 
-    return transactions;
+    await Promise.all(transactions);
+
+    return totalUnbondedStake;
 }

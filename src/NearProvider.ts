@@ -32,6 +32,7 @@ export default class NearProvider implements Provider {
     near?: Near;
     currentRequestId?: string;
 
+    /** Keeping track of balances, will fill in contract at init() */
     balance: Balance = new Balance('FLX', 18, '');
 
     constructor(env: EnvArgs) {
@@ -59,7 +60,7 @@ export default class NearProvider implements Provider {
     async getBalanceInfo(): Promise<Balance> {
         try {
             const balance = await this.rpc!.getTokenBalance(this.balance.contractId, this.config.validatorAccountId);
-            this.balance.resetBalance(balance);
+            this.balance.resetBalance(balance, this.balance.symbol, this.balance.decimals);
             return this.balance;
         } catch (error) {
             console.error('[getTokenBalance]', error);
@@ -85,7 +86,7 @@ export default class NearProvider implements Provider {
 
     async claim(request: DataRequest): Promise<ClaimResult> {
         const account = await getAccount(this.near!, this.config.validatorAccountId);
-        await Promise.all(claimBackUnbondedStake(this.config, request, account));
+        const amountUnbonded = await claimBackUnbondedStake(this.config, request, account);
 
         // First upgrade our storage if required
         await upgradeStorage(this.config, account);
@@ -99,9 +100,13 @@ export default class NearProvider implements Provider {
         const claimLog = logs.find(log => log.type === 'claims');
         const profit = new Big(claimLog?.params.payout ?? '0');
         const correctStake = new Big(claimLog?.params.user_correct_stake ?? '0');
+        const totalReceived = amountUnbonded.add(profit).add(correctStake);
+
+        this.balance.deposit(totalReceived.toString());
+        this.balance.addProfit(profit.toString());
 
         return {
-            received: profit.add(correctStake).toString(),
+            received: totalReceived.toString(),
             type: ClaimResultType.Success
         };
     }
