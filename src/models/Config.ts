@@ -15,7 +15,7 @@ export interface Config {
     oracleContractId: string;
     networkRpc: string;
     networkId: string;
-    stakeAmount: string;
+    maxStakeAmount: string;
     searchInterval: number;
     maxGas: BN;
     attachedStorage: BN;
@@ -31,7 +31,7 @@ export function parseConfig(env: EnvArgs): Config {
         validatorAccountId: env['NEAR_ACCOUNT_ID'] ?? '',
         networkRpc: env['NEAR_RPC'] ?? '',
         oracleContractId: env['NEAR_CONTRACT_ID'] ?? '',
-        stakeAmount: env['NEAR_STAKE_AMOUNT'] ?? '2.5',
+        maxStakeAmount: env['NEAR_MAX_STAKE_AMOUNT'] ?? '2.5',
         searchInterval: 5_000,
         networkId: env['NEAR_NETWORK_ID'] ?? '',
         attachedStorage: new BN(env['NEAR_ATTACHED_STORAGE'] ?? '30000000000000000000000'),
@@ -60,8 +60,8 @@ export function validateConfig(env: EnvArgs) {
         throw new Error(`env option "NEAR_RPC" is required for ${PROVIDER_NAME}`);
     }
 
-    if (env['NEAR_STAKE_AMOUNT']) {
-        // Validate if the number is actually a number
-        new Big(env['NEAR_STAKE_AMOUNT']);
+    if (env['NEAR_MAX_STAKE_AMOUNT']) {
+        // Checks if the number is an actual number
+        new Big(env['NEAR_MAX_STAKE_AMOUNT']);
     }
 }

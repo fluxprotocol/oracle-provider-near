@@ -18,6 +18,7 @@ import { transformToNearOutcome } from "./models/NearOutcome";
 import { upgradeStorage } from "./services/StorageService";
 import { extractLogs, isTransactionFailure } from "./services/TransactionService";
 import { claimBackUnbondedStake } from "./services/StakeService";
+import clampBig from "./utils/clamp";
 
 Big.PE = 100_000;
 
@@ -48,7 +49,9 @@ export default class NearProvider implements Provider {
         const oracleConfig = await this.rpc.getOracleConfig();
         
         // Reset the stakeAmount to the correct decimals
-        this.config.stakeAmount = toToken(this.config.stakeAmount, oracleConfig.stakeToken.decimals);
+        // We can't do this in parseConfig due the unknown decimals
+        this.config.maxStakeAmount = toToken(this.config.maxStakeAmount, oracleConfig.stakeToken.decimals);
+        
         this.balance.symbol = oracleConfig.stakeToken.symbol;
         this.balance.decimals = oracleConfig.stakeToken.decimals;
         this.balance.contractId = oracleConfig.stakeToken.contractId;
@@ -129,7 +132,11 @@ export default class NearProvider implements Provider {
 
     async stake(request: DataRequest, outcome: Outcome): Promise<StakeResult> {
         // Withdraw stake from the account and add it to the staked balance
-        const canStake = this.balance.stake(this.config.stakeAmount);
+        const maxStakeAmount = new Big(this.config.maxStakeAmount);
+        const currentWindow = getCurrentResolutionWindow(request);
+        const windowBondSize = new Big(currentWindow?.bondSize ?? maxStakeAmount);
+        const stakeAmount = clampBig(windowBondSize, new Big(0), maxStakeAmount);
+        const canStake = this.balance.stake(stakeAmount.toString());
 
         if (!canStake) {
             return {
@@ -148,7 +155,7 @@ export default class NearProvider implements Provider {
         // we should ask the data request for which token is used
         const response = await account.functionCall(this.balance.contractId, 'ft_transfer_call', {
             receiver_id: this.config.oracleContractId,
-            amount: this.config.stakeAmount,
+            amount: stakeAmount.toString(),
             msg: JSON.stringify({
                 'StakeDataRequest': {
                     id: request.id,
@@ -175,7 +182,7 @@ export default class NearProvider implements Provider {
         }
 
         // Put back any unstaked FLX
-        const amountBack = new Big(this.config.stakeAmount).sub(userStake.params.total_stake).toString();
+        const amountBack = stakeAmount.sub(userStake.params.total_stake).toString();
         this.balance.deposit(amountBack);
 
         return {
