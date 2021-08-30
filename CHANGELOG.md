@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/fluxprotocol/oracle-provider-near/compare/v1.2.3...v2.0.0) (2021-08-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** This will remove the NEAR_STAKE_AMOUNT
+
+### Features
+
+* **config:** Add NEAR_MAX_STAKE_AMOUNT ([70649fe](https://github.com/fluxprotocol/oracle-provider-near/commit/70649fe1512b5bc4dbd1e44d4559b6df346e312a))
+
 ### [1.2.3](https://github.com/fluxprotocol/oracle-provider-near/compare/v1.2.2...v1.2.3) (2021-08-25)
 
 
