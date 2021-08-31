@@ -132,7 +132,7 @@ export default class NearProvider implements Provider {
 
     async stake(request: DataRequest, outcome: Outcome): Promise<StakeResult> {
         // Withdraw stake from the account and add it to the staked balance
-        const stakeAmount = new Big(calcStakeAmount(request, this.config.maxStakeAmount));
+        const stakeAmount = new Big(calcStakeAmount(request, this.balance.balance.toString(), this.config.maxStakeAmount, this.config.stakeRemainderDivider));
         const canStake = this.balance.stake(stakeAmount.toString());
 
         if (!canStake) {

@@ -19,6 +19,7 @@ export interface Config {
     searchInterval: number;
     maxGas: BN;
     attachedStorage: BN;
+    stakeRemainderDivider: number;
 
     privateKey?: string;
     credentialsStorePath?: string;
@@ -36,6 +37,7 @@ export function parseConfig(env: EnvArgs): Config {
         networkId: env['NEAR_NETWORK_ID'] ?? '',
         attachedStorage: new BN(env['NEAR_ATTACHED_STORAGE'] ?? '30000000000000000000000'),
         maxGas: new BN(env['NEAR_MAX_GAS'] ?? '300000000000000'),
+        stakeRemainderDivider: Number(env['NEAR_STAKE_REMAINDER_DIVIDER']) ?? 1,
     };
 }
 
@@ -63,5 +65,14 @@ export function validateConfig(env: EnvArgs) {
     if (env['NEAR_MAX_STAKE_AMOUNT']) {
         // Checks if the number is an actual number
         new Big(env['NEAR_MAX_STAKE_AMOUNT']);
+    }
+
+    if (env['NEAR_STAKE_REMAINDER_DIVIDER']) {
+        // Checks if the number is an actual number
+        const value = new Big(env['NEAR_STAKE_REMAINDER_DIVIDER']);
+
+        if (value.lt(0) || value.gt(1)) {
+            throw new Error(`env option "NEAR_STAKE_REMAINDER_DIVIDER" should be between 0 and 1 (including)`);
+        }
     }
 }
