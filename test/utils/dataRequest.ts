@@ -1,6 +1,6 @@
 import DataRequest from "@fluxprotocol/oracle-provider-core/dist/DataRequest";
 
-export default function createDummyDataRequest(): DataRequest {
+export default function createDummyDataRequest(request: Partial<DataRequest> = {}): DataRequest {
     return {
         dataType: { type: 'string' },
         finalArbitratorTriggered: false,
@@ -11,5 +11,11 @@ export default function createDummyDataRequest(): DataRequest {
         resolutionWindows: [],
         sources: [],
         staking: [],
+        config: {
+            paidFee: '1',
+            validityBond: '1',
+            ...request.config,
+        },
+        ...request,
     }
 }

@@ -1,7 +1,7 @@
 import { Near } from "near-api-js";
 import Balance from '@fluxprotocol/oracle-provider-core/dist/Balance';
 import { toToken } from '@fluxprotocol/oracle-provider-core/dist/Token';
-import DataRequest, { getCurrentResolutionWindow } from '@fluxprotocol/oracle-provider-core/dist/DataRequest';
+import DataRequest, { calcStakeAmount, getCurrentResolutionWindow } from '@fluxprotocol/oracle-provider-core/dist/DataRequest';
 import Provider, { EnvArgs } from '@fluxprotocol/oracle-provider-core/dist/Provider';
 import { ClaimResult, ClaimResultType } from '@fluxprotocol/oracle-provider-core/dist/ClaimResult';
 import { Outcome } from '@fluxprotocol/oracle-provider-core/dist/Outcome';
@@ -132,10 +132,7 @@ export default class NearProvider implements Provider {
 
     async stake(request: DataRequest, outcome: Outcome): Promise<StakeResult> {
         // Withdraw stake from the account and add it to the staked balance
-        const maxStakeAmount = new Big(this.config.maxStakeAmount);
-        const currentWindow = getCurrentResolutionWindow(request);
-        const windowBondSize = new Big(currentWindow?.bondSize ?? maxStakeAmount);
-        const stakeAmount = clampBig(windowBondSize, new Big(0), maxStakeAmount);
+        const stakeAmount = new Big(calcStakeAmount(request, this.config.maxStakeAmount));
         const canStake = this.balance.stake(stakeAmount.toString());
 
         if (!canStake) {

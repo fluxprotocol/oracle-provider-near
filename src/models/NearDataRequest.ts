@@ -1,4 +1,5 @@
 import DataRequest, { buildInternalId } from '@fluxprotocol/oracle-provider-core/dist/DataRequest';
+import { toToken } from '@fluxprotocol/oracle-provider-core/dist/Token';
 import { nsToMs } from '../utils/nsToMs';
 import { PROVIDER_ID } from './Config';
 import { NearOutcome, transformToOutcome } from "./NearOutcome";
@@ -35,6 +36,11 @@ export interface NearRequest {
     tags: string[];
     paid_fee: string | null;
     data_type: NearRequestType;
+    request_config?: {
+        validity_bond?: string;
+        paid_fee?: string;
+        stake_multiplier?: number;
+    },
 }
 
 export function transformToDataRequest(request: NearRequest): DataRequest {
@@ -49,6 +55,11 @@ export function transformToDataRequest(request: NearRequest): DataRequest {
         providerId: PROVIDER_ID,
         finalizedOutcome: request.finalized_outcome ? transformToOutcome(request.finalized_outcome) : undefined,
         staking: [],
+        config: {
+            paidFee: request.request_config?.paid_fee ?? '0',
+            validityBond: request.request_config?.validity_bond ?? '0',
+            stakeMultiplier: request.request_config?.stake_multiplier,
+        },
         paidFee: request.paid_fee ?? undefined,
         resolutionWindows: request.resolution_windows.map(rw => ({
             round: rw.round,
