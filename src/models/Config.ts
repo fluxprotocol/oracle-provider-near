@@ -37,7 +37,7 @@ export function parseConfig(env: EnvArgs): Config {
         networkId: env['NEAR_NETWORK_ID'] ?? '',
         attachedStorage: new BN(env['NEAR_ATTACHED_STORAGE'] ?? '30000000000000000000000'),
         maxGas: new BN(env['NEAR_MAX_GAS'] ?? '300000000000000'),
-        stakeRemainderDivider: Number(env['NEAR_STAKE_REMAINDER_DIVIDER']) ?? 1,
+        stakeRemainderDivider: env['NEAR_STAKE_REMAINDER_DIVIDER'] ? Number(env['NEAR_STAKE_REMAINDER_DIVIDER']) : 1,
     };
 }
 
