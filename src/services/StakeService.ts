@@ -22,12 +22,18 @@ export async function claimBackUnbondedStake(config: Config, request: DataReques
             totalUnbondedStake = totalUnbondedStake.add(stake.amount);
             
             transactions.push(
-                account.functionCall(config.oracleContractId, 'dr_unstake', {
-                    request_id: request.id,
-                    resolution_round: stake.roundId,
-                    outcome: transformToNearOutcome(requestOutcome, request.dataType),
-                    amount: stake.amount,
-                }, new BN(config.maxGas), new BN('1')),
+                account.functionCall({
+                    contractId: config.oracleContractId,
+                    methodName: 'dr_unstake',
+                    args: {
+                        request_id: request.id,
+                        resolution_round: stake.roundId,
+                        outcome: transformToNearOutcome(requestOutcome, request.dataType),
+                        amount: stake.amount,
+                    },
+                    gas: config.maxGas,
+                    attachedDeposit: new BN(1),
+                }),
             );
         }
     });
