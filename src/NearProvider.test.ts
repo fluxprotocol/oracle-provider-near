@@ -4,7 +4,7 @@ import { toToken } from '@fluxprotocol/oracle-provider-core/dist/Token';
 import { OutcomeType } from '@fluxprotocol/oracle-provider-core/dist/Outcome';
 import * as AccountService from './services/AccountService';
 import * as StorageService from './services/StorageService';
-import { BN } from 'bn.js';
+import BN from 'bn.js';
 
 describe("NearProvider", () => {
     let getAccount: jest.SpyInstance<Promise<any>>;

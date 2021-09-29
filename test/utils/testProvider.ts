@@ -11,6 +11,5 @@ export default function createNearProvider(env: EnvArgs = {}) {
         'NEAR_CONTRACT_ID': ORACLE_CONTRACT_ID,
         'NEAR_NETWORK_ID': 'testnet',
         ...env,
-    });
-
+    }, {} as any);
 }

@@ -1,5 +1,5 @@
 import Big from "big.js";
-import { BN } from "bn.js";
+import BN from "bn.js";
 import { Account } from "near-api-js";
 import { Config } from "../models/Config";
 import cache from "../utils/cache";
@@ -71,8 +71,14 @@ export async function upgradeStorage(config: Config, account: Account, extraStor
     }
     
     const storageDeposit = storageRequired.sub(storageBalance.available).toString();
-    
-    await account.functionCall(config.oracleContractId, 'storage_deposit', {
-        account_id: config.validatorAccountId,
-    }, config.maxGas, new BN(storageDeposit));
+
+    await account.functionCall({
+        contractId: config.oracleContractId,
+        methodName: 'storage_deposit',
+        args: {
+            account_id: config.validatorAccountId,
+        },
+        gas: config.maxGas,
+        attachedDeposit: new BN(storageDeposit),
+    });
 }

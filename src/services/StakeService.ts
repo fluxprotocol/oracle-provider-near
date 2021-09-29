@@ -1,5 +1,5 @@
 import DataRequest from "@fluxprotocol/oracle-provider-core/dist/DataRequest";
-import { BN } from "bn.js";
+import BN from "bn.js";
 import { Account, providers } from "near-api-js";
 import { getRequestOutcome, isOutcomesEqual } from "@fluxprotocol/oracle-provider-core/dist/Outcome";
 import { Config } from "../models/Config";
