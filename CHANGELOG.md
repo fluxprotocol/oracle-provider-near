@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.1.3...v2.2.0) (2021-09-30)
+
+
+### Features
+
+* **near:** Update near-api-js to v0.43.0 which supports the removal of console logs ([d2ce834](https://github.com/fluxprotocol/oracle-provider-near/commit/d2ce834476e1685ce609ee8efeb84327611a0264))
+
 ### [2.1.3](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.1.2...v2.1.3) (2021-09-29)
 
 
