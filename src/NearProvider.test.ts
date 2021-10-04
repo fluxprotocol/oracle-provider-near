@@ -51,16 +51,22 @@ describe("NearProvider", () => {
 
             await provider.stake(request, { type: OutcomeType.Invalid });
 
-            expect(functionCall).toHaveBeenCalledWith('', 'ft_transfer_call', {
-                receiver_id: 'test',
-                amount: toToken('2', 18),
-                msg: JSON.stringify({
-                    'StakeDataRequest': {
-                        id: request.id,
-                        outcome: 'Invalid',
-                    },
-                }),
-            }, provider.config.maxGas, new BN('1'));
+            expect(functionCall).toHaveBeenCalledWith({
+                args: {
+                    amount: toToken('2', 18),
+                    receiver_id: 'test',
+                    msg: JSON.stringify({
+                        'StakeDataRequest': {
+                            id: request.id,
+                            outcome: 'Invalid',
+                        },
+                    }),
+                },
+                contractId: '',
+                methodName: 'ft_transfer_call',
+                gas: provider.config.maxGas,
+                attachedDeposit: new BN('1'),
+            });
         });
 
         it("should stake the bond size if there is a window size", async () => {
@@ -101,16 +107,22 @@ describe("NearProvider", () => {
 
             await provider.stake(request, { type: OutcomeType.Invalid });
 
-            expect(functionCall).toHaveBeenCalledWith('', 'ft_transfer_call', {
-                receiver_id: 'test',
-                amount: toToken('4', 18),
-                msg: JSON.stringify({
-                    'StakeDataRequest': {
-                        id: request.id,
-                        outcome: 'Invalid',
-                    },
-                }),
-            }, provider.config.maxGas, new BN('1'));
+            expect(functionCall).toHaveBeenCalledWith({
+                args: {
+                    receiver_id: 'test',
+                    amount: toToken('4', 18),
+                    msg: JSON.stringify({
+                        'StakeDataRequest': {
+                            id: request.id,
+                            outcome: 'Invalid',
+                        },
+                    }),
+                },
+                contractId: '',
+                methodName: 'ft_transfer_call',
+                gas: provider.config.maxGas,
+                attachedDeposit: new BN('1'),
+            });
         });
     });
 });
