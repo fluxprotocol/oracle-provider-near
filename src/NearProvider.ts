@@ -35,7 +35,7 @@ export default class NearProvider implements Provider {
     /** Keeping track of balances, will fill in contract at init() */
     balance: Balance;
 
-    constructor(env: EnvArgs, dependencies: ProviderDependencies) {
+    constructor(env: EnvArgs, private dependencies: ProviderDependencies) {
         validateConfig(env);
         this.config = parseConfig(env);
         this.balance = new Balance(dependencies.database, 'near_balance', 'FLX', 18, '');
@@ -44,7 +44,7 @@ export default class NearProvider implements Provider {
     async init() {
         this.near = await connectToNear(this.config);
         const account = await getAccount(this.near, this.config.validatorAccountId);
-        this.rpc = new RpcService(this.config, account);
+        this.rpc = new RpcService(this.config, account, this.dependencies.logger);
         
         const oracleConfig = await this.rpc.getOracleConfig();
         await this.balance.restore();
@@ -66,12 +66,13 @@ export default class NearProvider implements Provider {
 
     async getBalanceInfo(): Promise<Balance> {
         try {
+            this.dependencies.logger.debug(`${PROVIDER_ID} - Refreshing balances`);
             const balance = await this.rpc!.getTokenBalance(this.balance.contractId, this.config.validatorAccountId);
             this.balance.resetBalance(balance, this.balance.symbol, this.balance.decimals);
             await this.balance.save();
             return this.balance;
         } catch (error) {
-            console.error('[getTokenBalance]', error);
+            this.dependencies.logger.error(`${PROVIDER_ID} - getTokenBalance - ${error}`);
             return this.balance;
         }
     }
@@ -81,13 +82,13 @@ export default class NearProvider implements Provider {
             const dataRequest = await this.rpc!.getRequestById(requestId);
             return dataRequest;
         } catch (error) {
-            console.error('[getDataRequestById]', error);
+            this.dependencies.logger.error(`${PROVIDER_ID} - getDataRequestById - ${error}`);
             return undefined;
         }
     }
 
     listenForRequests(onRequests: (requests: DataRequest[]) => void) {
-        listenForRequests(this.rpc!, this.currentRequestId ?? '0', (requests) => {
+        listenForRequests(this.rpc!, this.dependencies.logger, this.currentRequestId ?? '0', (requests) => {
             onRequests(requests);
         });
     }
@@ -102,6 +103,8 @@ export default class NearProvider implements Provider {
             this.balance.unstake(request.id, amountUnbonded.toString());
     
             if (request.finalizedOutcome && !isOutcomesEqual(request.finalizedOutcome, requestOutcome)) {
+                this.dependencies.logger.debug(`${request.internalId} - Slashed due outcome not being the same`);
+
                 // We staked on the wrong outcome, we got slashed
                 this.balance.slashSelf(request.id);
     
@@ -113,7 +116,7 @@ export default class NearProvider implements Provider {
             }
     
             // First upgrade our storage if required
-            await upgradeStorage(this.config, account);
+            await upgradeStorage(this.config, this.dependencies.logger, account);
 
             const claimTransactionResult = await account.functionCall({
                 contractId: this.config.oracleContractId,
@@ -168,7 +171,7 @@ export default class NearProvider implements Provider {
         const account = await getAccount(this.near!, this.config.validatorAccountId);
 
         // First upgrade our storage if required
-        await upgradeStorage(this.config, account);
+        await upgradeStorage(this.config, this.dependencies.logger, account);
 
         const finalizeTransaction = await account.functionCall({
             contractId: this.config.oracleContractId,
@@ -199,7 +202,7 @@ export default class NearProvider implements Provider {
         const nearOutcome = transformToNearOutcome(outcome, request.dataType);
         
         // First upgrade our storage if required
-        await upgradeStorage(this.config, account);
+        await upgradeStorage(this.config, this.dependencies.logger, account);
 
         // TODO: The token contract id (balance.contractId) should be dynamically set
         // we should ask the data request for which token is used
@@ -256,7 +259,7 @@ export default class NearProvider implements Provider {
         // Set the starting point for other requests
         this.currentRequestId = startingRequestId;
 
-        return syncRequests(this.rpc!, this.currentRequestId, (requests) => {
+        return syncRequests(this.rpc!, this.dependencies.logger, this.currentRequestId, (requests) => {
             requests.forEach((request) => {
                 this.currentRequestId = request.id;
                 onRequest(request);

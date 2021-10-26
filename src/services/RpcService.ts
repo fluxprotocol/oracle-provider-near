@@ -3,9 +3,10 @@ import DataRequest from "@fluxprotocol/oracle-provider-core/dist/DataRequest";
 import { Config } from "../models/Config";
 import { OracleConfig, OracleConfigApiResponse } from "../models/OracleConfig";
 import { NearRequest, transformToDataRequest } from "../models/NearDataRequest";
+import { ILogger } from "@fluxprotocol/oracle-provider-core/dist/Core";
 
 class RpcService {
-    constructor(public config: Config, private account: Account) {}
+    constructor(public config: Config, private account: Account, private logger: ILogger) {}
 
     public async getTokenBalance(tokenId: string, accountId: string): Promise<string> {
         const balance: string = await this.account.viewFunction(tokenId, 'ft_balance_of', {
@@ -29,20 +30,30 @@ class RpcService {
     }
 
     public async getRequestById(id: string): Promise<DataRequest | undefined> {
-        const request = await this.account.viewFunction(this.config.oracleContractId, 'get_request_by_id', {
-            id,
-        });
-    
-        return transformToDataRequest(request);
+        try {
+            const request = await this.account.viewFunction(this.config.oracleContractId, 'get_request_by_id', {
+                id,
+            });
+        
+            return transformToDataRequest(request);
+        } catch (error) {
+            this.logger.error(`${id} - ${error}`);
+            return undefined;
+        }
     }
 
     public async getRequests(startingId: string, limit: string = "15"): Promise<DataRequest[]> {
-        const requests: NearRequest[] = await this.account.viewFunction(this.config.oracleContractId, 'get_requests', {
-            from_index: startingId,
-            limit: limit,
-        });
-
-        return requests.map(request => transformToDataRequest(request));
+        try {
+            const requests: NearRequest[] = await this.account.viewFunction(this.config.oracleContractId, 'get_requests', {
+                from_index: startingId,
+                limit: limit,
+            });
+    
+            return requests.map(request => transformToDataRequest(request));
+        } catch (error) {
+            this.logger.error(`[near] getRequests - ${error}`);
+            return [];
+        }
     }
 }
 

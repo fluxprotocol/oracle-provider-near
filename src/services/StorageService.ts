@@ -1,7 +1,8 @@
+import { ILogger } from "@fluxprotocol/oracle-provider-core/dist/Core";
 import Big from "big.js";
 import BN from "bn.js";
 import { Account } from "near-api-js";
-import { Config } from "../models/Config";
+import { Config, PROVIDER_ID } from "../models/Config";
 import cache from "../utils/cache";
 
 /**
@@ -61,7 +62,7 @@ export async function getStorageBalance(contractId: string, accountId: string, a
  * @param {Big} extraStorage Can be used for calls that require way more than the minimum storage requirements
  * @return {(Promise<TransactionOption | null>)}
  */
-export async function upgradeStorage(config: Config, account: Account, extraStorage: Big = new Big(0)): Promise<void> {
+export async function upgradeStorage(config: Config, logger: ILogger, account: Account, extraStorage: Big = new Big(0)): Promise<void> {
     const minimumStorageRequired = await getMinimumStorage(config.oracleContractId, account);
     const storageBalance = await getStorageBalance(config.oracleContractId, config.validatorAccountId, account);
     const storageRequired = minimumStorageRequired.add(extraStorage);
@@ -71,6 +72,7 @@ export async function upgradeStorage(config: Config, account: Account, extraStor
     }
     
     const storageDeposit = storageRequired.sub(storageBalance.available).toString();
+    logger.debug(`${PROVIDER_ID} - current deposited storage (${storageBalance.available.toString()}) is less then ${storageRequired.toString()}, adding ${storageDeposit}`);
 
     await account.functionCall({
         contractId: config.oracleContractId,
