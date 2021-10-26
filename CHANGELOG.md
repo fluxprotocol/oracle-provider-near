@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.3](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.3.2...v2.3.3) (2021-10-26)
+
+
+### Bug Fixes
+
+* **rpc:** Fix issue where an RPC fail would result in the node restarting ([287b3d5](https://github.com/fluxprotocol/oracle-provider-near/commit/287b3d57eb39b0194f58ae14a067897f561dc8f8))
+
 ### [2.3.2](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.3.1...v2.3.2) (2021-10-18)
 
 
