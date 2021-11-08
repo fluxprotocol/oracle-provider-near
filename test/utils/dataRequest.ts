@@ -11,6 +11,8 @@ export default function createDummyDataRequest(request: Partial<DataRequest> = {
         resolutionWindows: [],
         sources: [],
         staking: [],
+        tags: [],
+        requester: '',
         config: {
             paidFee: '1',
             validityBond: '1',

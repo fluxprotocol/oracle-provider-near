@@ -20,12 +20,25 @@ export interface NearRequestSource {
 
 export type NearRequestType = "String" | { Number: string };
 
+interface Requester {
+    contract_name: string,
+    account_id: string,
+    stake_multiplier?: number | null,
+    code_base_url?: string | null,
+}
+
 export interface NearRequest {
     id: string;
     description: string | null;
     sources: NearRequestSource[],
     outcomes: string[] | null;
-    requestor: string;
+    requestor?: {
+        interface_name: string;
+        account_id: string;
+        stake_multiplier: null;
+        code_base_url: string | null;
+    };
+    requester?: Requester;
     creator: string;
     finalized_outcome: NearOutcome | null;
     resolution_windows: NearRequestResolutionWindow[];
@@ -48,6 +61,8 @@ export function transformToDataRequest(request: NearRequest): DataRequest {
     return {
         id: request.id.toString(),
         internalId: buildInternalId(request.id, PROVIDER_ID, ''),
+        requester: request.requester?.account_id ?? request.requestor?.account_id ?? '',
+        tags: request.tags,
         dataType: request.data_type === 'String' ? { type: 'string' } : { type: 'number', multiplier: request.data_type.Number },
         finalArbitratorTriggered: request.final_arbitrator_triggered,
         outcomes: request.outcomes ?? [],
