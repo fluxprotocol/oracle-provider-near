@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.3.3...v2.4.0) (2021-11-08)
+
+
+### Features
+
+* **request:** Add tags and requester ([90abfd4](https://github.com/fluxprotocol/oracle-provider-near/commit/90abfd4eb6c3072a99c41a77a750110673e79574))
+
 ### [2.3.3](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.3.2...v2.3.3) (2021-10-26)
 
 
