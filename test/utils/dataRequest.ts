@@ -13,6 +13,7 @@ export default function createDummyDataRequest(request: Partial<DataRequest> = {
         staking: [],
         tags: [],
         requester: '',
+        requiredEnvVariables: [],
         config: {
             paidFee: '1',
             validityBond: '1',

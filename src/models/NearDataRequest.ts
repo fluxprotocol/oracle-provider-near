@@ -61,6 +61,7 @@ export function transformToDataRequest(request: NearRequest): DataRequest {
     return {
         id: request.id.toString(),
         internalId: buildInternalId(request.id, PROVIDER_ID, ''),
+        requiredEnvVariables: [],
         requester: request.requester?.account_id ?? request.requestor?.account_id ?? '',
         tags: request.tags,
         dataType: request.data_type === 'String' ? { type: 'string' } : { type: 'number', multiplier: request.data_type.Number },
