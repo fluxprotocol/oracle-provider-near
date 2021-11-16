@@ -31,7 +31,7 @@ class RpcService {
 
     public async getRequestById(id: string): Promise<DataRequest | undefined> {
         try {
-            const request = await this.account.viewFunction(this.config.oracleContractId, 'get_request_by_id', {
+            const request: NearRequest = await this.account.viewFunction(this.config.oracleContractId, 'get_request_by_id', {
                 id,
             });
         
