@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.5.0...v3.0.0) (2021-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **request:** Support for first party oracle required changes in the decision making for finalization
+
+### Features
+
+* **request:** Add support for first party oracle ([dada907](https://github.com/fluxprotocol/oracle-provider-near/commit/dada90708a059a5d3a7b0bb3b7f9b99d13be3312))
+* **rpc:** Implement Active/Finalized data requests ([1628d70](https://github.com/fluxprotocol/oracle-provider-near/commit/1628d70103434657f3338976c39a1a567f313ba2))
+
 ## [2.5.0](https://github.com/fluxprotocol/oracle-provider-near/compare/v2.4.0...v2.5.0) (2021-11-09)
 
 
