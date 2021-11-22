@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/fluxprotocol/oracle-provider-near#readme",
   "dependencies": {
-    "@fluxprotocol/oracle-provider-core": "^1.9.0",
+    "@fluxprotocol/oracle-provider-core": "^2.0.0",
     "big.js": "^6.1.1",
     "bn.js": "^5.2.0",
     "near-api-js": "^0.43.1",
