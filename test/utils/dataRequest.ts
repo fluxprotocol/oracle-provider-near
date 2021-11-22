@@ -14,6 +14,7 @@ export default function createDummyDataRequest(request: Partial<DataRequest> = {
         tags: [],
         requester: '',
         requiredEnvVariables: [],
+        allowedValidators: [],
         config: {
             paidFee: '1',
             validityBond: '1',

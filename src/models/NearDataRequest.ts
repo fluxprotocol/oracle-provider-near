@@ -45,6 +45,7 @@ export interface ActiveNearRequest {
     final_arbitrator_triggered: boolean;
     tags: string[];
     data_type: NearRequestType;
+    provider?: string | null;
     request_config?: {
         validity_bond?: string;
         paid_fee?: string;
@@ -96,5 +97,6 @@ export function transformToDataRequest(request: NearRequest): DataRequest {
             endTime: new Date(nsToMs(Number(rw.end_time))),
             bondedOutcome: rw.bonded_outcome ? transformToOutcome(rw.bonded_outcome) : undefined,
         })) ?? [],
+        allowedValidators: request.Active?.provider ? [request.Active.provider] : [],
     };
 }

@@ -41,6 +41,10 @@ export default class NearProvider implements Provider {
         this.balance = new Balance(dependencies.database, 'near_balance', 'FLX', 18, '');
     }
 
+    getAccountId() {
+        return this.config.validatorAccountId;
+    }
+
     async init() {
         this.near = await connectToNear(this.config);
         const account = await getAccount(this.near, this.config.validatorAccountId);
@@ -172,6 +176,28 @@ export default class NearProvider implements Provider {
 
         // First upgrade our storage if required
         await upgradeStorage(this.config, this.dependencies.logger, account);
+
+        // First party oracle
+        if (request.allowedValidators.length) {
+            if (request.executeResult && request.allowedValidators.includes(account.accountId)) {
+                const nearOutcome = transformToNearOutcome(getRequestOutcome(request), request.dataType);
+                
+                const finalizeTransaction = await account.functionCall({
+                    contractId: this.config.oracleContractId,
+                    methodName: 'dr_finalize_by_provider',
+                    args: {
+                        request_id: request.id,
+                        outcome: nearOutcome,
+                    },
+                    gas: this.config.maxGas,
+                    attachedDeposit: new BN(0)
+                });
+
+                return !isTransactionFailure(finalizeTransaction);
+            }
+
+            return false;
+        }
 
         const finalizeTransaction = await account.functionCall({
             contractId: this.config.oracleContractId,
