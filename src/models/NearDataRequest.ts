@@ -50,6 +50,7 @@ export interface ActiveNearRequest {
         validity_bond?: string;
         paid_fee?: string;
         stake_multiplier?: number;
+        min_resolution_bond?: string;
     },
 }
 
@@ -88,6 +89,7 @@ export function transformToDataRequest(request: NearRequest): DataRequest {
             paidFee: Active?.request_config?.paid_fee ?? '0',
             validityBond: Active?.request_config?.validity_bond ?? '0',
             stakeMultiplier: Active?.request_config?.stake_multiplier,
+            minResolutionBond: Active?.request_config?.min_resolution_bond ?? '1',
         },
         paidFee: Finalized?.paid_fee ?? undefined,
         resolutionWindows: Active?.resolution_windows.map(rw => ({

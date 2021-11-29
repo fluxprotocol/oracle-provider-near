@@ -33,6 +33,7 @@ describe("NearProvider", () => {
                 config: {
                     paidFee: '0',
                     validityBond: toToken('1', 18),
+                    minResolutionBond: '1000000000000000000',
                 },
             });
 
