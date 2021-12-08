@@ -42,7 +42,7 @@ class RpcService {
         }
     }
 
-    public async getRequests(startingId: string, limit: string = "15"): Promise<DataRequest[]> {
+    public async getRequests(startingId: string, limit: string = "5"): Promise<DataRequest[]> {
         try {
             const requests: NearRequest[] = await this.account.viewFunction(this.config.oracleContractId, 'get_requests', {
                 from_index: startingId,
