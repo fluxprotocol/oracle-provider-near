@@ -71,7 +71,7 @@ export async function upgradeStorage(config: Config, logger: ILogger, account: A
         return;
     }
     
-    const storageDeposit = storageRequired.sub(storageBalance.available).toString();
+    const storageDeposit = storageRequired.sub(storageBalance.available).add(minimumStorageRequired).toString();
     logger.debug(`${PROVIDER_ID} - current deposited storage (${storageBalance.available.toString()}) is less then ${storageRequired.toString()}, adding ${storageDeposit}`);
 
     await account.functionCall({
